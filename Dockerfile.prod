@@ -50,15 +50,11 @@ EXPOSE 10000
 CMD sh -c '\
     echo "APP_NAME=\"Client Portal\"" > .env && \
     echo "APP_ENV=production" >> .env && \
-    echo "APP_DEBUG=false" >> .env && \
+    echo "APP_DEBUG=${APP_DEBUG:-false}" >> .env && \
     echo "APP_KEY=${APP_KEY}" >> .env && \
     echo "APP_URL=${APP_URL}" >> .env && \
     echo "DB_CONNECTION=pgsql" >> .env && \
-    echo "DB_HOST=${DB_HOST}" >> .env && \
-    echo "DB_PORT=${DB_PORT:-5432}" >> .env && \
-    echo "DB_DATABASE=${DB_DATABASE}" >> .env && \
-    echo "DB_USERNAME=${DB_USERNAME}" >> .env && \
-    echo "DB_PASSWORD=${DB_PASSWORD}" >> .env && \
+    echo "DB_URL=${DB_URL}" >> .env && \
     echo "SESSION_DRIVER=database" >> .env && \
     echo "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" >> .env && \
     echo "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" >> .env && \
