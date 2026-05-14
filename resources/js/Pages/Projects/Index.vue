@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3'
+import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, watch } from 'vue'
 
@@ -13,6 +13,7 @@ interface Project {
     status: string
     deadline: string | null
     tasks_count: number
+    created_by: number
     client: {
         id: number
         name: string
@@ -41,9 +42,20 @@ interface Props {
         search: string | null
     }
     statuses: string[]
+    can: {
+        edit: boolean
+        delete: boolean
+    }
 }
 
 const props = defineProps<Props>()
+
+const page = usePage()
+
+function canModify(project: Project): boolean {
+    const auth = (page.props.auth as any)?.user
+    return auth?.role === 'admin' || auth?.id === project.created_by
+}
 
 const search = ref(props.filters.search || '')
 const statusFilter = ref(props.filters.status || '')
@@ -145,7 +157,7 @@ function formatStatus(status: string): string {
                 </td>
                 <td>{{ project.deadline ? formatDate(project.deadline) : '-' }}</td>
                 <td>{{ project.tasks_count }}</td>
-                <td>
+                <td v-if="canModify(project)">
                     <Link :href="`/projects/${project.id}/edit`" class="btn-secondary text-xs">
                         Edit
                     </Link>

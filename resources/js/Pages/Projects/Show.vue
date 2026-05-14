@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router, useForm } from '@inertiajs/vue3'
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, computed } from 'vue'
 
@@ -41,6 +41,7 @@ interface Props {
         status: string
         deadline: string | null
         created_at: string
+        created_by: number
         client: {
             id: number
             name: string
@@ -60,6 +61,23 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const page = usePage()
+
+function canEditTask(task: Task): boolean {
+    const auth = (page.props.auth as any)?.user
+    return auth?.role === 'admin' || auth?.id === props.project.created_by || auth?.id === task.assignee?.id
+}
+
+function canMoveTask(task: Task): boolean {
+    const auth = (page.props.auth as any)?.user
+    return auth?.role === 'admin' || auth?.id === props.project.created_by || auth?.id === task.assignee?.id
+}
+
+function canDeleteTask(task: Task): boolean {
+    const auth = (page.props.auth as any)?.user
+    return auth?.role === 'admin' || auth?.id === props.project.created_by
+}
 
 // Status change handler
 function changeStatus(newStatus: string) {
@@ -300,16 +318,23 @@ function saveTask(taskId: number) {
                                 <div class="kanban-card-assignee">
                                     <template v-if="task.assignee">
                                         <div class="kanban-card-assignee-avatar">
-                                            <img v-if="task.assignee.avatar_url" :src="task.assignee.avatar_url" :alt="task.assignee.name" />
-                                            <span v-else>{{ getInitials(task.assignee.name) }}</span>
+                                            <img
+                                                v-if="task.assignee.avatar_url"
+                                                :src="task.assignee.avatar_url"
+                                                :alt="task.assignee.name"
+                                                @error="(e: Event) => { (e.target as HTMLElement).style.display='none'; (e.target as HTMLElement).nextElementSibling?.removeAttribute('style') }"
+                                            />
+                                            <span :style="task.assignee.avatar_url ? 'display:none' : ''">
+                                                {{ getInitials(task.assignee.name) }}
+                                            </span>
                                         </div>
                                         {{ task.assignee.name }}
                                     </template>
                                 </div>
                                 <div class="flex gap-1">
-                                    <button class="text-xs text-blue-600 hover:underline" @click="startEditing(task)">Edit</button>
-                                    <button class="text-xs text-gray-400 hover:text-gray-600" @click="moveTask(task.id, 'in_progress')">&#9654;</button>
-                                    <button class="text-xs text-red-400 hover:text-red-600" @click="deleteTask(task.id)">&#10005;</button>
+                                    <button v-if="canEditTask(task)" class="text-xs text-blue-600 hover:underline" @click="startEditing(task)">Edit</button>
+                                    <button v-if="canMoveTask(task)" class="text-xs text-gray-400 hover:text-gray-600" @click="moveTask(task.id, 'in_progress')">&#9654;</button>
+                                    <button v-if="canDeleteTask(task)" class="text-xs text-red-400 hover:text-red-600" @click="deleteTask(task.id)">&#10005;</button>
                                 </div>
                             </div>
                         </div>
@@ -378,10 +403,10 @@ function saveTask(taskId: number) {
                                     </template>
                                 </div>
                                 <div class="flex gap-1">
-                                    <button class="text-xs text-blue-600 hover:underline" @click="startEditing(task)">Edit</button>
-                                    <button class="text-xs text-gray-400 hover:text-gray-600" @click="moveTask(task.id, 'todo')">&#9664;</button>
+                                    <button v-if="canEditTask(task)" class="text-xs text-blue-600 hover:underline" @click="startEditing(task)">Edit</button>
+                                    <button v-if="canMoveTask(task)" class="text-xs text-gray-400 hover:text-gray-600" @click="moveTask(task.id, 'todo')">&#9664;</button>
                                     <button class="text-xs text-gray-400 hover:text-gray-600" @click="moveTask(task.id, 'done')">&#9654;</button>
-                                    <button class="text-xs text-red-400 hover:text-red-600" @click="deleteTask(task.id)">&#10005;</button>
+                                    <button v-if="canDeleteTask(task)" class="text-xs text-red-400 hover:text-red-600" @click="deleteTask(task.id)">&#10005;</button>
                                 </div>
                             </div>
                         </div>
@@ -437,9 +462,9 @@ function saveTask(taskId: number) {
                                     </template>
                                 </div>
                                 <div class="flex gap-1">
-                                    <button class="text-xs text-blue-600 hover:underline" @click="startEditing(task)">Edit</button>
-                                    <button class="text-xs text-gray-400 hover:text-gray-600" @click="moveTask(task.id, 'in_progress')">&#9664;</button>
-                                    <button class="text-xs text-red-400 hover:text-red-600" @click="deleteTask(task.id)">&#10005;</button>
+                                    <button v-if="canEditTask(task)" class="text-xs text-blue-600 hover:underline" @click="startEditing(task)">Edit</button>
+                                    <button v-if="canMoveTask(task)" class="text-xs text-gray-400 hover:text-gray-600" @click="moveTask(task.id, 'in_progress')">&#9664;</button>
+                                    <button v-if="canDeleteTask(task)" class="text-xs text-red-400 hover:text-red-600" @click="deleteTask(task.id)">&#10005;</button>
                                 </div>
                             </div>
                         </div>
@@ -461,8 +486,11 @@ function saveTask(taskId: number) {
                             v-if="item.user?.avatar_url"
                             :src="item.user.avatar_url"
                             :alt="item.user.name"
+                            @error="(e: Event) => { (e.target as HTMLElement).style.display='none'; (e.target as HTMLElement).nextElementSibling?.removeAttribute('style') }"
                         />
-                        <span v-else>{{ item.user ? getInitials(item.user.name) : '?' }}</span>
+                        <span :style="item.user?.avatar_url ? 'display:none' : ''">
+                            {{ item.user ? getInitials(item.user.name) : '?' }}
+                        </span>
                     </div>
                     <div class="activity-item-text">
                         {{ item.description }}

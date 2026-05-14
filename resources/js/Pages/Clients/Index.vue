@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3'
+import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, watch } from 'vue'
 
@@ -14,6 +14,7 @@ interface Client {
     email: string | null
     phone: string | null
     projects_count: number
+    created_by: number
     creator: {
         name: string
     }
@@ -36,9 +37,20 @@ interface Props {
     filters: {
         search: string | null
     }
+    can: {
+        edit: boolean
+        delete: boolean
+    }
 }
 
 const props = defineProps<Props>()
+
+const page = usePage()
+
+function canModify(client: Client): boolean {
+    const auth = (page.props.auth as any)?.user
+    return auth?.role === 'admin' || auth?.id === client.created_by
+}
 
 // Local search state, initialized from the server-provided filter value
 const search = ref(props.filters.search || '')
@@ -107,7 +119,7 @@ function confirmDelete(client: Client) {
                 <td>{{ client.company || '-' }}</td>
                 <td>{{ client.email || '-' }}</td>
                 <td>{{ client.projects_count }}</td>
-                <td>
+                <td v-if="canModify(client)">
                     <div class="flex gap-2">
                         <Link :href="`/clients/${client.id}/edit`" class="btn-secondary text-xs">
                             Edit
