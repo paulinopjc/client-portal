@@ -27,7 +27,9 @@ class AuthController extends Controller
      */
     public function redirectToGoogle(): RedirectResponse
     {
-        return Socialite::driver('google')->redirect();
+        $url = Socialite::driver('google')->redirect()->getTargetUrl();
+
+        return redirect($url . '&prompt=select_account');
     }
 
     /**
