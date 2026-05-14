@@ -114,7 +114,7 @@ function formatSubjectType(type: string): string {
                     <div class="activity-item-text">
                         <strong>{{ item.user?.name || 'System' }}</strong>
                         {{ formatAction(item.action) }}
-                        <span class="badge badge--{{ item.subject_type }}">
+                        <span :class="`badge badge--${item.subject_type}`">
                             {{ formatSubjectType(item.subject_type) }}
                         </span>
                     </div>

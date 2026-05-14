@@ -73,6 +73,7 @@ class ActivityLog extends Model
             'client' => Client::class,
             'project' => Project::class,
             'task' => Task::class,
+            'user' => User::class,
         ];
 
         $modelClass = $map[$this->subject_type] ?? null;
@@ -100,6 +101,7 @@ class ActivityLog extends Model
             Client::class => 'client',
             Project::class => 'project',
             Task::class => 'task',
+            User::class => 'user',
         ];
 
         return self::create([
