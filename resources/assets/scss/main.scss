@@ -1,0 +1,326 @@
+// This file imports all SCSS partials.
+@use 'variables' as *;
+@use 'mixins' as *;
+
+@use 'sidebar';
+@use 'dashboard';
+@use 'kanban';
+
+// ─── Global Styles ────────────────────────────────────────────
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: $font-family;
+    color: $color-gray-800;
+    background-color: $color-gray-100;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// ─── Page Layout ──────────────────────────────────────────────
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: $sidebar-width;
+    margin-top: $navbar-height;
+    padding: $spacing-xl;
+
+    @media (max-width: $breakpoint-lg - 1) {
+        margin-left: 0;
+    }
+}
+
+// ─── Navbar ───────────────────────────────────────────────────
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: $navbar-height;
+    background: white;
+    border-bottom: 1px solid $color-gray-200;
+    @include flex-between;
+    padding: 0 $spacing-xl;
+    z-index: 50;
+}
+
+.navbar-left {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: $spacing-md;
+}
+
+.navbar-brand {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $color-gray-900;
+    text-decoration: none;
+}
+
+.navbar-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    padding: $spacing-sm;
+    cursor: pointer;
+    color: $color-gray-600;
+
+    @media (max-width: $breakpoint-lg - 1) {
+        display: block;
+    }
+}
+
+.navbar-right {
+    @include flex-center;
+    gap: $spacing-md;
+}
+
+.navbar-user {
+    @include flex-center;
+    gap: $spacing-sm;
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+}
+
+.navbar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $color-gray-200;
+    @include flex-center;
+    font-size: $font-size-xs;
+    font-weight: 600;
+    color: $color-gray-600;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.navbar-logout {
+    @include button-base;
+    background: transparent;
+    color: $color-gray-500;
+    padding: $spacing-xs $spacing-sm;
+
+    &:hover {
+        color: $color-danger;
+        background: $color-danger-light;
+    }
+}
+
+// ─── Page Headers ─────────────────────────────────────────────
+
+.page-header {
+    @include flex-between;
+    margin-bottom: $spacing-xl;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+}
+
+.page-title {
+    font-size: $font-size-2xl;
+    font-weight: 700;
+    color: $color-gray-900;
+    margin: 0;
+}
+
+// ─── Buttons ──────────────────────────────────────────────────
+
+.btn-primary {
+    @include button-base;
+    background: $color-primary;
+    color: white;
+
+    &:hover:not(:disabled) {
+        background: $color-primary-dark;
+    }
+}
+
+.btn-secondary {
+    @include button-base;
+    background: white;
+    color: $color-gray-700;
+    border: 1px solid $color-gray-300;
+
+    &:hover:not(:disabled) {
+        background: $color-gray-50;
+        border-color: $color-gray-400;
+    }
+}
+
+.btn-danger {
+    @include button-base;
+    background: $color-danger;
+    color: white;
+
+    &:hover:not(:disabled) {
+        background: darken($color-danger, 10%);
+    }
+}
+
+// ─── Forms ────────────────────────────────────────────────────
+
+.form-group {
+    margin-bottom: $spacing-lg;
+}
+
+.form-label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $color-gray-700;
+    margin-bottom: $spacing-xs;
+}
+
+.form-input {
+    @include form-input;
+}
+
+.form-textarea {
+    @include form-input;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-select {
+    @include form-input;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+.form-error {
+    font-size: $font-size-xs;
+    color: $color-danger;
+    margin-top: $spacing-xs;
+}
+
+// ─── Flash Messages ───────────────────────────────────────────
+
+.flash-message {
+    padding: $spacing-md $spacing-lg;
+    border-radius: $border-radius;
+    margin-bottom: $spacing-lg;
+    font-size: $font-size-sm;
+    @include flex-between;
+
+    &--success {
+        background: $color-success-light;
+        color: darken($color-success, 10%);
+        border: 1px solid lighten($color-success, 30%);
+    }
+
+    &--error {
+        background: $color-danger-light;
+        color: $color-danger;
+        border: 1px solid lighten($color-danger, 30%);
+    }
+}
+
+.flash-message-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    font-size: $font-size-lg;
+    padding: 0;
+    line-height: 1;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+// ─── Status Badges ────────────────────────────────────────────
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: $font-size-xs;
+    font-weight: 500;
+
+    &--draft {
+        color: $color-gray-600;
+        background: $color-gray-100;
+    }
+
+    &--active,
+    &--in_progress {
+        color: $color-warning;
+        background: $color-warning-light;
+    }
+
+    &--completed,
+    &--done {
+        color: $color-success;
+        background: $color-success-light;
+    }
+
+    &--todo {
+        color: $color-primary;
+        background: $color-primary-light;
+    }
+}
+
+// ─── Tables ───────────────────────────────────────────────────
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: $border-radius;
+    overflow: hidden;
+    box-shadow: $shadow-sm;
+
+    th,
+    td {
+        padding: $spacing-md $spacing-lg;
+        text-align: left;
+        font-size: $font-size-sm;
+    }
+
+    th {
+        background: $color-gray-50;
+        font-weight: 600;
+        color: $color-gray-600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: $font-size-xs;
+        border-bottom: 1px solid $color-gray-200;
+    }
+
+    td {
+        color: $color-gray-700;
+        border-bottom: 1px solid $color-gray-100;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover td {
+        background: $color-gray-50;
+    }
+}

@@ -1,0 +1,92 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.sidebar {
+    position: fixed;
+    top: $navbar-height;
+    left: 0;
+    bottom: 0;
+    width: $sidebar-width;
+    background: $color-gray-900;
+    color: white;
+    overflow-y: auto;
+    transition: width $transition-slow;
+    z-index: 40;
+
+    // On mobile, sidebar is hidden by default
+    @media (max-width: $breakpoint-lg - 1) {
+        transform: translateX(-100%);
+        transition: transform $transition-slow;
+
+        &.is-open {
+            transform: translateX(0);
+        }
+    }
+}
+
+.sidebar-nav {
+    padding: $spacing-md 0;
+    list-style: none;
+    margin: 0;
+}
+
+.sidebar-nav-item {
+    margin: 0 $spacing-sm;
+}
+
+.sidebar-nav-link {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    color: $color-gray-400;
+    text-decoration: none;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    transition: all $transition-fast;
+
+    &:hover {
+        color: white;
+        background: rgba(white, 0.1);
+    }
+
+    &.is-active {
+        color: white;
+        background: $color-primary;
+
+        &:hover {
+            background: $color-primary-dark;
+        }
+    }
+}
+
+.sidebar-nav-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.sidebar-section-label {
+    padding: $spacing-lg $spacing-md $spacing-sm;
+    font-size: $font-size-xs;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $color-gray-500;
+}
+
+// Overlay for mobile when sidebar is open
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 30;
+
+    @media (max-width: $breakpoint-lg - 1) {
+        &.is-visible {
+            display: block;
+        }
+    }
+}

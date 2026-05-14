@@ -1,0 +1,110 @@
+@use 'variables' as *;
+
+// ─── Responsive Breakpoints ───────────────────────────────────
+// Usage: @include respond-to('md') { ... }
+// Generates: @media (min-width: 768px) { ... }
+@mixin respond-to($breakpoint) {
+    @if $breakpoint == 'sm' {
+        @media (min-width: $breakpoint-sm) { @content; }
+    } @else if $breakpoint == 'md' {
+        @media (min-width: $breakpoint-md) { @content; }
+    } @else if $breakpoint == 'lg' {
+        @media (min-width: $breakpoint-lg) { @content; }
+    } @else if $breakpoint == 'xl' {
+        @media (min-width: $breakpoint-xl) { @content; }
+    }
+}
+
+// ─── Card ─────────────────────────────────────────────────────
+// Usage: @include card; or @include card(16px);
+// Generates a white card with rounded corners and shadow.
+@mixin card($padding: $spacing-lg) {
+    background: white;
+    border-radius: $border-radius;
+    box-shadow: $shadow-sm;
+    padding: $padding;
+}
+
+// ─── Button Base ──────────────────────────────────────────────
+// Usage: @include button-base;
+// Sets up common button styling. Add color-specific overrides after.
+@mixin button-base {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all $transition-fast;
+    text-decoration: none;
+    line-height: 1.5;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+// ─── Flex Helpers ─────────────────────────────────────────────
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+// ─── Truncate Text ────────────────────────────────────────────
+// Usage: @include truncate;
+// Cuts text with an ellipsis when it overflows.
+@mixin truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// ─── Status Badge ─────────────────────────────────────────────
+// Usage: @include status-badge($color-success, $color-success-light);
+@mixin status-badge($color, $bg-color) {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: $font-size-xs;
+    font-weight: 500;
+    color: $color;
+    background-color: $bg-color;
+}
+
+// ─── Form Input ───────────────────────────────────────────────
+@mixin form-input {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $color-gray-300;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-sm;
+    color: $color-gray-800;
+    transition: border-color $transition-fast;
+
+    &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+
+    &::placeholder {
+        color: $color-gray-400;
+    }
+}

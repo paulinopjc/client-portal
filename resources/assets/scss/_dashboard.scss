@@ -1,0 +1,140 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
+
+    @include respond-to('sm') {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to('lg') {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.stat-card {
+    @include card;
+    @include flex-between;
+    border-left: 4px solid transparent;
+
+    &--clients {
+        border-left-color: $color-primary;
+    }
+
+    &--projects {
+        border-left-color: $color-success;
+    }
+
+    &--tasks {
+        border-left-color: $color-warning;
+    }
+}
+
+.stat-card-content {
+    @include flex-column;
+}
+
+.stat-card-label {
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    margin-bottom: $spacing-xs;
+}
+
+.stat-card-value {
+    font-size: $font-size-2xl;
+    font-weight: 700;
+    color: $color-gray-900;
+}
+
+.stat-card-icon {
+    width: 48px;
+    height: 48px;
+    @include flex-center;
+    border-radius: $border-radius;
+    background: $color-gray-50;
+    color: $color-gray-500;
+}
+
+// ─── Recent Activity ──────────────────────────────────────────
+
+.activity-section {
+    @include card;
+}
+
+.activity-section-header {
+    @include flex-between;
+    margin-bottom: $spacing-lg;
+
+    h2 {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $color-gray-900;
+        margin: 0;
+    }
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item {
+    @include flex-between;
+    padding: $spacing-md 0;
+    border-bottom: 1px solid $color-gray-100;
+
+    &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    &:first-child {
+        padding-top: 0;
+    }
+}
+
+.activity-item-content {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: $spacing-md;
+}
+
+.activity-item-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: $color-gray-200;
+    @include flex-center;
+    font-size: $font-size-xs;
+    font-weight: 600;
+    color: $color-gray-600;
+    flex-shrink: 0;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.activity-item-text {
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+
+    strong {
+        font-weight: 600;
+        color: $color-gray-900;
+    }
+}
+
+.activity-item-time {
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+    white-space: nowrap;
+}
